@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechLife | ร้านค้าออนไลน์ครบวงจร</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+        .cart-scroll::-webkit-scrollbar { width: 6px; }
+        .cart-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+        .cart-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        .slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* Custom Checkbox for Payment */
+        .payment-radio:checked + div {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .payment-radio:checked + div .check-icon {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md fixed w-full z-50 top-0">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" onclick="showView('home')" class="text-2xl font-bold text-indigo-600 flex items-center gap-2">
+                <i class="fas fa-bolt"></i> TechLife
+            </a>
+            
+            <div class="flex items-center gap-4">
+                <!-- User Menu -->
+                <div id="user-section" class="relative">
+                    <button onclick="toggleLoginModal()" id="login-btn" class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition">
+                        <i class="far fa-user-circle text-xl"></i>
+                        <span class="hidden md:inline text-sm font-medium">เข้าสู่ระบบ</span>
+                    </button>
+                    <!-- Logged In Dropdown (Hidden by default) -->
+                    <div id="user-dropdown" class="hidden flex items-center gap-3">
+                        <span id="user-name" class="text-sm font-medium text-gray-700 hidden md:block"></span>
+                        <div class="relative group">
+                            <button class="flex items-center gap-2 text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full hover:bg-indigo-100 transition">
+                                <i class="fas fa-user-check"></i>
+                                <span class="text-sm font-bold">บัญชี</span>
+                            </button>
+                            <!-- Dropdown Menu -->
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 hidden group-hover:block fade-in">
+                                <a href="#" onclick="showView('profile')" class="block px-4 py-2 hover:bg-gray-50 text-sm text-gray-700"><i class="fas fa-history mr-2"></i>ประวัติคำสั่งซื้อ</a>
+                                <a href="#" onclick="logout()" class="block px-4 py-2 hover:bg-gray-50 text-sm text-red-600"><i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cart Icon -->
+                <div class="relative cursor-pointer" onclick="toggleCart()">
+                    <div class="p-2 hover:bg-gray-100 rounded-full transition relative">
+                        <i class="fas fa-shopping-cart text-xl text-gray-600"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="mt-16 min-h-screen">
+        
+        <!-- View: Home -->
+        <div id="view-home" class="fade-in">
+            <!-- Hero -->
+            <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-12 md:py-20">
+                <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+                    <div class="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+                        <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 inline-block">โปรโมชั่นพิเศษ</span>
+                        <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">Technology for<br>Better Life</h1>
+                        <p class="text-lg opacity-90 mb-8 max-w-lg">พบกับสินค้านวัตกรรมใหม่ล่าสุด ราคาคุ้มค่า พร้อมรับประกันศูนย์ไทยทุกชิ้น</p>
+                        <button onclick="scrollToProducts()" class="bg-white text-indigo-600 px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            เริ่มช้อปเลย
+                        </button>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <!-- Simulated Hero Image/Icon -->
+                        <div class="text-9xl text-white/20 relative">
+                            <i class="fas fa-laptop-code absolute top-0 left-0 animate-bounce" style="animation-duration: 3s;"></i>
+                            <i class="fas fa-headset absolute top-10 right-[-50px] text-white/30 text-8xl" style="animation-delay: 1s;"></i>
+                            <i class="fas fa-rocket text-white opacity-90 relative z-10"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Filters & Grid -->
+            <div class="container mx-auto px-4 py-8">
+                <div class="flex flex-wrap justify-center gap-3 mb-8" id="category-filters">
+                    <button onclick="filterProducts('all')" class="filter-btn active bg-indigo-600 text-white px-5 py-2 rounded-full border border-indigo-600 shadow-sm transition text-sm font-medium">ทั้งหมด</button>
+                    <button onclick="filterProducts('หูฟัง')" class="filter-btn bg-white text-gray-600 hover:bg-indigo-50 px-5 py-2 rounded-full border border-gray-200 shadow-sm transition text-sm font-medium">หูฟัง</button>
+                    <button onclick="filterProducts('นาฬิกา')" class="filter-btn bg-white text-gray-600 hover:bg-indigo-50 px-5 py-2 rounded-full border border-gray-200 shadow-sm transition text-sm font-medium">นาฬิกา</button>
+                    <button onclick="filterProducts('กล้อง')" class="filter-btn bg-white text-gray-600 hover:bg-indigo-50 px-5 py-2 rounded-full border border-gray-200 shadow-sm transition text-sm font-medium">กล้อง</button>
+                </div>
+
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Products injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- View: User Profile & Orders -->
+        <div id="view-profile" class="hidden container mx-auto px-4 py-8 fade-in">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-user-circle text-indigo-600"></i> บัญชีของฉัน
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- User Info Card -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-fit">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-3xl mb-4">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 id="profile-name" class="text-xl font-bold text-gray-800">User Name</h3>
+                        <p id="profile-email" class="text-gray-500 text-sm mb-4">user@example.com</p>
+                        <div class="w-full border-t border-gray-100 pt-4 mt-2">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-500">สถานะสมาชิก</span>
+                                <span class="text-green-600 font-medium"><i class="fas fa-star text-xs"></i> Member</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">แต้มสะสม</span>
+                                <span class="font-medium">0 คะแนน</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order History -->
+                <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold mb-4 border-b pb-2">ประวัติการสั่งซื้อ</h3>
+                    <div id="order-list" class="space-y-4">
+                        <!-- Orders will be injected here -->
+                        <div class="text-center text-gray-400 py-8">
+                            <i class="fas fa-box-open text-4xl mb-2 opacity-50"></i>
+                            <p>ยังไม่มีประวัติการสั่งซื้อ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-10 mt-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-white text-lg font-bold mb-4 flex items-center gap-2"><i class="fas fa-bolt text-indigo-500"></i> TechLife</h3>
+                <p class="text-sm opacity-80">ร้านค้าอุปกรณ์ไอทีอันดับ 1 ที่คุณไว้วางใจ ส่งไว ได้ของชัวร์</p>
+            </div>
+            <div>
+                <h4 class="text-white font-medium mb-3">บริการลูกค้า</h4>
+                <ul class="text-sm space-y-2">
+                    <li><a href="#" class="hover:text-white">วิธีการสั่งซื้อ</a></li>
+                    <li><a href="#" class="hover:text-white">การจัดส่งสินค้า</a></li>
+                    <li><a href="#" class="hover:text-white">การรับประกัน</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-medium mb-3">เกี่ยวกับเรา</h4>
+                <ul class="text-sm space-y-2">
+                    <li><a href="#" class="hover:text-white">รู้จัก TechLife</a></li>
+                    <li><a href="#" class="hover:text-white">ร่วมงานกับเรา</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-medium mb-3">ช่องทางชำระเงิน</h4>
+                <div class="flex gap-2 text-2xl">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fas fa-qrcode"></i>
+                </div>
+            </div>
+        </div>
+        <div class="text-center text-xs mt-10 pt-6 border-t border-gray-800">
+            &copy; 2024 TechLife Shop System. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+
+    <!-- 1. Cart Sidebar -->
+    <div id="cart-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50 transition-opacity" onclick="toggleCart()"></div>
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl transform transition-transform duration-300 translate-x-full flex flex-col" id="cart-panel">
+            <div class="p-5 border-b flex justify-between items-center bg-gray-50">
+                <h2 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-shopping-bag text-indigo-600"></i> ตะกร้าสินค้า</h2>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-5 cart-scroll space-y-4"></div>
+            <div class="p-5 border-t bg-gray-50">
+                <div class="flex justify-between items-end mb-4">
+                    <span class="text-gray-600">ยอดรวมทั้งหมด</span>
+                    <span id="cart-total" class="text-2xl font-bold text-indigo-600">฿0</span>
+                </div>
+                <button onclick="initCheckout()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition shadow-md">ชำระเงิน</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Login Modal -->
+    <div id="login-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" onclick="toggleLoginModal()"></div>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm relative z-10 overflow-hidden slide-up">
+            <div class="bg-indigo-600 p-6 text-center text-white">
+                <h2 class="text-2xl font-bold mb-1">ยินดีต้อนรับ</h2>
+                <p class="text-indigo-200 text-sm">เข้าสู่ระบบเพื่อรับสิทธิพิเศษ</p>
+            </div>
+            <div class="p-6">
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล / เบอร์โทร</label>
+                        <input type="text" id="login-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="user@example.com" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
+                        <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="******" required>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700 transition">เข้าสู่ระบบ</button>
+                </form>
+                <div class="mt-4 text-center text-xs text-gray-500">
+                    ยังไม่มีบัญชี? <a href="#" class="text-indigo-600 font-bold hover:underline">สมัครสมาชิก</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Checkout Modal (Payment System) -->
+    <div id="checkout-modal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl relative z-10 max-h-[90vh] overflow-y-auto flex flex-col slide-up">
+            <div class="p-5 border-b flex justify-between items-center bg-gray-50 sticky top-0">
+                <h2 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-credit-card text-indigo-600"></i> ยืนยันคำสั่งซื้อ</h2>
+                <button onclick="closeCheckout()" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <!-- Step 1: Address -->
+                <div class="space-y-3">
+                    <h3 class="font-bold text-gray-800 border-b pb-2">1. ที่อยู่จัดส่ง</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="checkout-name" placeholder="ชื่อ-นามสกุล" class="border p-2 rounded focus:ring-2 focus:ring-indigo-500 outline-none w-full">
+                        <input type="text" id="checkout-tel" placeholder="เบอร์โทรศัพท์" class="border p-2 rounded focus:ring-2 focus:ring-indigo-500 outline-none w-full">
+                        <textarea id="checkout-address" placeholder="ที่อยู่จัดส่ง" class="border p-2 rounded focus:ring-2 focus:ring-indigo-500 outline-none w-full md:col-span-2 h-20"></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 2: Payment Method -->
+                <div class="space-y-3">
+                    <h3 class="font-bold text-gray-800 border-b pb-2">2. วิธีการชำระเงิน</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- QR Code -->
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="payment" value="qr" class="payment-radio sr-only" checked>
+                            <div class="border-2 border-gray-200 rounded-lg p-4 flex items-center gap-3 hover:border-indigo-300 transition h-full">
+                                <i class="fas fa-qrcode text-2xl text-gray-600"></i>
+                                <div>
+                                    <div class="font-bold text-sm">สแกน QR Code</div>
+                                    <div class="text-xs text-gray-500">พร้อมเพย์ / Mobile Banking</div>
+                                </div>
+                                <i class="fas fa-check-circle text-indigo-600 absolute top-3 right-3 opacity-0 check-icon transition"></i>
+                            </div>
+                        </label>
+                        <!-- Credit Card -->
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="payment" value="card" class="payment-radio sr-only">
+                            <div class="border-2 border-gray-200 rounded-lg p-4 flex items-center gap-3 hover:border-indigo-300 transition h-full">
+                                <i class="far fa-credit-card text-2xl text-gray-600"></i>
+                                <div>
+                                    <div class="font-bold text-sm">บัตรเครดิต / เดบิต</div>
+                                    <div class="text-xs text-gray-500">Visa, Mastercard, JCB</div>
+                                </div>
+                                <i class="fas fa-check-circle text-indigo-600 absolute top-3 right-3 opacity-0 check-icon transition"></i>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 3: Summary -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between text-sm mb-1"><span>ราคาสินค้า</span><span id="checkout-subtotal">฿0</span></div>
+                    <div class="flex justify-between text-sm mb-1"><span>ค่าจัดส่ง</span><span class="text-green-600">ฟรี</span></div>
+                    <div class="flex justify-between font-bold text-lg mt-2 pt-2 border-t"><span>ยอดสุทธิ</span><span id="checkout-total" class="text-indigo-600">฿0</span></div>
+                </div>
+            </div>
+
+            <div class="p-5 border-t bg-gray-50 sticky bottom-0">
+                <button onclick="processPayment()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition shadow-lg flex justify-center items-center gap-2">
+                    <span>ยืนยันและชำระเงิน</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 transition-transform duration-300 z-[90] flex items-center gap-3">
+        <i class="fas fa-check-circle text-green-400"></i>
+        <span id="toast-message">ข้อความแจ้งเตือน</span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex items-center justify-center text-white flex-col">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mb-4"></div>
+        <p>กำลังดำเนินการ...</p>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- DATA ---
+        const products = [
+            { id: 1, name: "หูฟังไร้สาย Pro X (ANC)", price: 1290, category: "หูฟัง", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80" },
+            { id: 2, name: "Smart Watch Series 5", price: 2500, category: "นาฬิกา", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80" },
+            { id: 3, name: "กล้อง Mirrorless 4K Vlog", price: 15900, category: "กล้อง", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=500&q=80" },
+            { id: 4, name: "คีย์บอร์ด Mechanical RGB", price: 3200, category: "อุปกรณ์เสริม", image: "https://images.unsplash.com/photo-1587829741301-dc798b91a603?auto=format&fit=crop&w=500&q=80" },
+            { id: 5, name: "เมาส์เกมมิ่ง Wireless", price: 990, category: "อุปกรณ์เสริม", image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=500&q=80" },
+            { id: 6, name: "ลำโพง Bluetooth Retro", price: 890, category: "อุปกรณ์เสริม", image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=500&q=80" },
+            { id: 7, name: "หูฟัง Headset Gamer 7.1", price: 1850, category: "หูฟัง", image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80" },
+            { id: 8, name: "กล้อง Instant Camera", price: 2100, category: "กล้อง", image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=500&q=80" }
+        ];
+
+        // --- STATE ---
+        let state = {
+            cart: [],
+            user: null, // { name, email }
+            orders: []  // Array of { id, date, total, status, items }
+        };
+
+        // --- INIT ---
+        function init() {
+            renderProducts();
+            updateCartUI();
+            checkUserSession();
+        }
+
+        // --- VIEW NAVIGATION ---
+        function showView(viewId) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-profile').classList.add('hidden');
+            
+            if(viewId === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+            } else if (viewId === 'profile') {
+                if(!state.user) {
+                    toggleLoginModal();
+                    return;
+                }
+                updateOrderHistory();
+                document.getElementById('view-profile').classList.remove('hidden');
+            }
+            window.scrollTo(0,0);
+        }
+
+        // --- PRODUCTS & FILTERS ---
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+            filtered.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-lg transition duration-300">
+                        <div class="h-48 overflow-hidden bg-gray-100 relative group">
+                            <img src="${p.image}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                            <button onclick="addToCart(${p.id})" class="absolute bottom-3 right-3 bg-white p-2.5 rounded-full shadow-md text-indigo-600 hover:bg-indigo-600 hover:text-white transition transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <span class="text-xs text-gray-500 mb-1">${p.category}</span>
+                            <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">${p.name}</h3>
+                            <div class="mt-auto flex justify-between items-center">
+                                <span class="text-indigo-600 font-bold text-lg">฿${p.price.toLocaleString()}</span>
+                                <button onclick="addToCart(${p.id})" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-600 hover:text-white transition font-medium">ใส่ตะกร้า</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterProducts(cat) {
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                if(b.innerText === cat || (cat === 'all' && b.innerText === 'ทั้งหมด')) {
+                    b.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+                    b.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                } else {
+                    b.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+                    b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                }
+            });
+            renderProducts(cat);
+        }
+
+        // --- CART SYSTEM ---
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const exist = state.cart.find(item => item.id === id);
+            if(exist) exist.quantity++;
+            else state.cart.push({...product, quantity: 1});
+            
+            updateCartUI();
+            showToast(`เพิ่ม ${product.name} แล้ว`);
+        }
+
+        function updateCartUI() {
+            const totalQty = state.cart.reduce((s, i) => s + i.quantity, 0);
+            const badge = document.getElementById('cart-count');
+            badge.innerText = totalQty;
+            badge.classList.toggle('scale-0', totalQty === 0);
+
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            
+            if(state.cart.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-400 mt-10"><i class="fas fa-shopping-basket text-4xl mb-3 opacity-30"></i><p>ตะกร้าว่างเปล่า</p></div>`;
+                totalEl.innerText = '฿0';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+            state.cart.forEach(item => {
+                total += item.price * item.quantity;
+                html += `
+                    <div class="flex gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-md">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-sm line-clamp-1">${item.name}</h4>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-indigo-600 font-bold text-sm">฿${(item.price * item.quantity).toLocaleString()}</span>
+                                <div class="flex items-center bg-white rounded border border-gray-200">
+                                    <button onclick="updateQty(${item.id}, -1)" class="px-2 py-0.5 text-gray-500 hover:bg-gray-100"><i class="fas fa-minus text-[10px]"></i></button>
+                                    <span class="w-6 text-center text-xs">${item.quantity}</span>
+                                    <button onclick="updateQty(${item.id}, 1)" class="px-2 py-0.5 text-gray-500 hover:bg-gray-100"><i class="fas fa-plus text-[10px]"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            totalEl.innerText = '฿' + total.toLocaleString();
+        }
+
+        function updateQty(id, delta) {
+            const item = state.cart.find(i => i.id === id);
+            if(item) {
+                item.quantity += delta;
+                if(item.quantity <= 0) state.cart = state.cart.filter(i => i.id !== id);
+                updateCartUI();
+            }
+        }
+
+        function toggleCart() {
+            const m = document.getElementById('cart-modal');
+            const p = document.getElementById('cart-panel');
+            if(m.classList.contains('hidden')) {
+                m.classList.remove('hidden');
+                setTimeout(() => p.classList.remove('translate-x-full'), 10);
+                document.body.style.overflow = 'hidden';
+            } else {
+                p.classList.add('translate-x-full');
+                setTimeout(() => m.classList.add('hidden'), 300);
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // --- AUTH SYSTEM (MEMBER) ---
+        function toggleLoginModal() {
+            const m = document.getElementById('login-modal');
+            m.classList.toggle('hidden');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            // Mock Login
+            state.user = { 
+                name: email.split('@')[0], 
+                email: email 
+            };
+            toggleLoginModal();
+            checkUserSession();
+            showToast(`ยินดีต้อนรับคุณ ${state.user.name}`);
+        }
+
+        function logout() {
+            state.user = null;
+            checkUserSession();
+            showView('home');
+            showToast('ออกจากระบบแล้ว');
+        }
+
+        function checkUserSession() {
+            const btn = document.getElementById('login-btn');
+            const dd = document.getElementById('user-dropdown');
+            
+            if(state.user) {
+                btn.classList.add('hidden');
+                dd.classList.remove('hidden');
+                document.getElementById('user-name').innerText = state.user.name;
+                document.getElementById('profile-name').innerText = state.user.name;
+                document.getElementById('profile-email').innerText = state.user.email;
+            } else {
+                btn.classList.remove('hidden');
+                dd.classList.add('hidden');
+            }
+        }
+
+        // --- CHECKOUT & PAYMENT SYSTEM ---
+        function initCheckout() {
+            if(state.cart.length === 0) return alert('กรุณาเลือกสินค้า');
+            if(!state.user) {
+                toggleCart();
+                toggleLoginModal();
+                showToast('กรุณาเข้าสู่ระบบก่อนชำระเงิน');
+                return;
+            }
+            
+            toggleCart();
+            const total = state.cart.reduce((s, i) => s + (i.price * i.quantity), 0);
+            document.getElementById('checkout-subtotal').innerText = '฿' + total.toLocaleString();
+            document.getElementById('checkout-total').innerText = '฿' + total.toLocaleString();
+            
+            // Auto fill name if available
+            document.getElementById('checkout-name').value = state.user.name;
+            
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        function processPayment() {
+            const name = document.getElementById('checkout-name').value;
+            const tel = document.getElementById('checkout-tel').value;
+            const addr = document.getElementById('checkout-address').value;
+            
+            if(!name || !tel || !addr) {
+                alert('กรุณากรอกข้อมูลจัดส่งให้ครบถ้วน');
+                return;
+            }
+
+            // Simulate Processing
+            document.getElementById('loading').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+                
+                // Create Order Record
+                const newOrder = {
+                    id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+                    date: new Date().toLocaleDateString('th-TH'),
+                    total: state.cart.reduce((s, i) => s + (i.price * i.quantity), 0),
+                    status: 'ชำระเงินแล้ว',
+                    items: [...state.cart]
+                };
+                
+                state.orders.unshift(newOrder); // Add to history
+                state.cart = []; // Clear cart
+                updateCartUI();
+                closeCheckout();
+                
+                // Show success and redirect to profile
+                showToast('ชำระเงินสำเร็จ!');
+                setTimeout(() => showView('profile'), 500);
+                
+            }, 2000); // 2 seconds delay
+        }
+
+        // --- ORDER HISTORY ---
+        function updateOrderHistory() {
+            const list = document.getElementById('order-list');
+            if(state.orders.length === 0) {
+                list.innerHTML = `<div class="text-center text-gray-400 py-8"><i class="fas fa-box-open text-4xl mb-2 opacity-50"></i><p>ยังไม่มีประวัติการสั่งซื้อ</p></div>`;
+                return;
+            }
+
+            list.innerHTML = state.orders.map(order => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-200 transition bg-white">
+                    <div class="flex justify-between items-start mb-3 pb-3 border-b border-gray-100">
+                        <div>
+                            <span class="text-xs text-gray-500">หมายเลขคำสั่งซื้อ</span>
+                            <div class="font-bold text-indigo-600">${order.id}</div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-gray-500">วันที่สั่งซื้อ</span>
+                            <div class="text-sm">${order.date}</div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-3">
+                        ${order.items.map(i => `
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">${i.name} x ${i.quantity}</span>
+                                <span>฿${(i.price * i.quantity).toLocaleString()}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                        <span class="inline-block px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                            <i class="fas fa-check-circle mr-1"></i>${order.status}
+                        </span>
+                        <span class="font-bold text-lg">฿${order.total.toLocaleString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- UTILS ---
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            t.classList.remove('translate-y-20');
+            setTimeout(() => t.classList.add('translate-y-20'), 3000);
+        }
+
+        function scrollToProducts() {
+            document.getElementById('category-filters').scrollIntoView({behavior: 'smooth'});
+        }
+
+        // Start App
+        init();
+
+    </script>
+</body>
+</html>
